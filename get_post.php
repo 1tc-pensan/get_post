@@ -1,7 +1,7 @@
 <?php
 $name = '';
 $pass = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+/*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['name'])) {
         $name = $_POST['name'];
     }
@@ -10,6 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['name'])) {
+    $name = $_GET['name'];
+}
+    */
+//Ha lehet GET és POST is
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['name'])) {
+        $name = $_POST['name'];
+    }
+    if (isset($_POST['pass'])) {
+        $pass = $_POST['pass'];
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['name'])) {
     $name = $_GET['name'];
 }
 ?>
