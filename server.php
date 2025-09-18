@@ -11,7 +11,7 @@
     <ul>
         <li><strong>Kérés módja:</strong> <?php echo $_SERVER['REQUEST_METHOD']; ?></li>
         <li><strong>Kért URL:</strong> <?php echo $_SERVER['REQUEST_URI']; ?></li>
-        <li><strong>Szkript neve:</strong> <?php echo $_SERVER['SCRIPT_NAME']; ?></li>
+        <li><strong>Szkript neve:</strong> <?php echo $_SERVER['PHP_SELF']; ?></li>
         <li><strong>QUERY string:</strong><?php
          if (empty($_SERVER['QUERY_STRING'])) {
             echo " Nincs query string";
@@ -20,6 +20,27 @@
             echo " " . $_SERVER['QUERY_STRING'];
          }
          ?></li>
+         <!--if 
+         paraméterek
+         ul
+         li
+         li
+         ul
+         split fgv-nel
+         -->
+         <ul>
+            <?php
+            if (!empty($_SERVER['QUERY_STRING'])) {
+                $params = explode('&', $_SERVER['QUERY_STRING']);
+                foreach ($params as $param) {
+                    $keyValue = explode('=', $param);
+                    if (count($keyValue) == 2) {
+                        echo "<li><strong>" . htmlspecialchars($keyValue[0]) . ":</strong> " . htmlspecialchars($keyValue[1]) . "</li>";
+                    }
+                }
+            }
+            ?>
+         </ul>
     <h2>Szerver adati</h2>
         <ul>
             <li>Szerver neve : <?php echo $_SERVER['SERVER_NAME']; ?></li>
@@ -32,9 +53,7 @@
             <li>Felhasználó nyelve : <?php echo $_SERVER['HTTP_ACCEPT_LANGUAGE']; ?></li>
             <li>Felhasználó host neve : <?php echo gethostbyaddr($_SERVER['REMOTE_ADDR']); ?></li>
          <br>
-         <a href="?Patrik=mozso&age=12">
-         <p>Kattints ide egy paraméterezett GET kéréshez</p>
-         </a>
+         <a href="<?php echo $_SERVER['PHP_SELF'];?>?name=Patrik&age=12"><p>Kattints ide egy paraméterezett GET kéréshez</p></a>
     </ul>
 </body>
 </html>
