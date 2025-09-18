@@ -14,15 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['name'])) {
 }
     */
 //Ha lehet GET és POST is
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['name'])) {
-        $name = $_POST['name'];
-    }
-    if (isset($_POST['pass'])) {
-        $pass = $_POST['pass'];
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['name'])) {
-    $name = $_GET['name'];
+if (isset($_REQUEST['name'])) {
+    $name = htmlspecialchars($_REQUEST['name']);
+    $pass = $_REQUEST['pass'] ?? '';
 }
 ?>
 <html>
@@ -47,5 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if ($pass): ?>
         <p>Your password is: <?php echo htmlspecialchars($pass); ?></p>
     <?php endif; ?>
+    
 </body>
 </html>
