@@ -18,6 +18,7 @@ try {
         if (file_put_contents($datafile, $newdata) !=false) 
             {
             $massage = "Adatok sikeresen mentve.";
+            $currentContent=$newdata;
             //Napolozás
             $currentTime=date("Y-m-d H:i:s");
             $logentry="{[$currentTime]} Módosítás történt a {$datafile} fájl tartalmába";
@@ -47,13 +48,11 @@ try {
         echo "<p style='color:red;'>$errorMessage</p>";
     }
     ?>
-    <pre><?php echo htmlspecialchars($currentContent); ?></pre>
+    <pre><?php echo htmlspecialchars($currentContent);?></pre>
     <h2>Módosítás</h2>
     <form action="" method="post">
         <label for="newdata">Új adatok (Név:Kor formátumban):</label><br>
-        <textarea type="text" name="newdata" id="newdata" cols="30" rows="10">
-            <?php echo htmlspecialchars($currentContent); ?>
-        </textarea>
+    <textarea type="text" name="newdata" id="newdata" cols="30" rows="10"><?php echo htmlspecialchars($currentContent);?></textarea>
         <button type="submit">Mentés</button>
     </form>
 </body>
