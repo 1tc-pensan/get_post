@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdn.simplecss.org/simple-v1.css">
 <?php  // Opcionális tisztítási műveletek
 $datafile = 'data.txt';
 $logfile = 'log.txt';
@@ -17,14 +18,19 @@ try {
         if (file_put_contents($datafile, $newdata) !=false) 
             {
             $massage = "Adatok sikeresen mentve.";
+            //Napolozás
+            $currentTime=date("Y-m-d H:i:s");
+            $logentry="{[$currentTime]} Módosítás történt a {$datafile} fájl tartalmába";
+            if (file_put_contents($logfile,$logentry,FILE_APPEND | LOCK_EX)==false) 
+            {
+                throw new Exception("Nem sikerült a $logfile napzolása");
+            }
         } else {
-            throw new Exception("Az új adatok nem lehetnek üresek.");
+            throw new Exception("Az $datafile nem lehezt üres");
         }
     }
 } catch (Exception $e) {
     $errorMessage = "Hiba történt: " . $e->getMessage();
-    file_put_contents($logfile, $errorMessage . PHP_EOL, FILE_APPEND);
-    $currentContent = "Hiba történt a fájl olvasásakor.";
 }
 ?>
 <!DOCTYPE html>
