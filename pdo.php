@@ -24,8 +24,30 @@ $dsn='mysql:host=localhost;dbname=busnisscards;charset=utf8';
 $user='root';
 $pass='';
 try {
-    $pdo=new PDO($dsn,$user,$pass)
+    $pdo=new PDO($dsn,$user,$pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "sikere";;
 } catch (PDOException $ex) {
-    echo "Kapcs hiba: {$ex->Getmessage}"
+    echo "Kapcs hiba: {$ex->Getmessage()}";
 }
+$name="P";
+$companyName="cég";
+$phone="063062054104";
+$email="valami@valami.com";
+$photo=null;
+$note="valamideaznagyon";
+//$sql ="INSERT INTO cards (`name`,`companyName`,phone,email,photo,note) values('$name','$companyName','$phone','$email','$photo','$note')";
+echo "<br>";
+$sql="INSERT INTO cards (`name`,`companyName`,phone,email,photo,note) values(?,?,?,?,?,?)";
+$stmt=$pdo->prepare($sql);
+$stmt->execute([$name,$companyName,$phone,$email,$photo,$note]);
+$sql="SELECT * FROM cards where id=11";
+
+$result = $pdo->query($sql);
+$card = $result->fetch(PDO::FETCH_ASSOC);
+print_r($card);
+
+
+
+//$pdo->exec($sql);
 ?>
