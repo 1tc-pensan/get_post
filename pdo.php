@@ -46,7 +46,8 @@ try{
     //sql_injection
     //sql_injection($pdo);
     echo "<br>";
-    prepared_statement($pdo); //védekezés sql injection ellen
+    //prepared_statement($pdo); //védekezés sql injection ellen
+    checked_insert($pdo);
 } catch(PDOException $ex){
     echo "kapcs hiba {$ex->getMessage()}";
     exit();
@@ -88,5 +89,37 @@ $card = $stmt->fetchAll(PDO::FETCH_ASSOC);
 print_r($card);
     //$sql = "INSERT INTO cards(`name`,companyName,phone,email,photo,note) VALUES (?,?,?,?,?,?)";
     //$pdo->exec($sql);
+}
+function checked_insert($pdo)
+{
+    $name = "patrik";
+    $companyName = htmlspecialchars("<script>alert(\"asf\")</script>");
+    $phone = "0630934534";
+    $email = "vali@gmail.com";
+    $photo = null;
+    $note = "igen";
+
+    // Biztonságos prepared statement használata
+    $sql = "INSERT INTO cards (`name`, `companyName`, `phone`, `email`, `photo`, `note`) 
+            VALUES (:name, :companyName, :phone, :email, :photo, :note)";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':name' => $name,
+        ':companyName' => $companyName,
+        ':phone' => $phone,
+        ':email' => $email,
+        ':photo' => $photo,
+        ':note' => $note
+    ]);
+
+    // Ha szeretnél visszaolvasni az új rekordot:
+    $lastId = $pdo->lastInsertId();
+    $stmt = $pdo->prepare("SELECT * FROM cards WHERE id = :id");
+    $stmt->execute([':id' => $lastId]);
+    $card = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo "<br>";
+    print_r($card);
 }
 ?>
