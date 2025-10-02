@@ -1,53 +1,92 @@
 <link rel="stylesheet" href="https://cdn.simplecss.org/simple-v1.css">
 <?php
+/**
+ * CRUD: CREATE READ UPDATE DELETE
+ * 
+ * tfh: van egy cards tablam amiben van name email es id mezo
+ * 
+ * backtick `
+ * 
+ * 1. mysql
+ * - READ: SELECT name, email FROM cards WHERE id=10;
+ * - CREATE: INSERT INTO cards (`name`, `email`) VALUES ('tibi','tibi@mzsrk.hu');
+ * - UPDATE: UPDATE cards SET email = 'tibi2004@mzsrk.hu' WHERE id = 10;
+ * - DELETE: DELETE FROM cards WHERE id = 10;
+
+*/
 /*
-READ:-SELECT name,email from cards where id=10;
-CREATE:INSERT INTO CARDS (name,email) VALUE("Tibi","tibi@mzsrk.hu");
-UDPATE: UPDATE cards set email="tibi2025@mzsrk.hu" where id=10;
--DELETE:DElETE from card Where id=10;
+CREATE DATABASE businesscards;
 
-Creata Database busnisscards;
-use busnisscards;
+use businesscards;
 
-create table cards(
-    `id` Int unsigned primary key auto_increment,
-    `name` Varchar(100) not NUll,
-    `companyname` Varchar(100) default NUll,
-    `phone`Varchar(20) default NUll,
-    `email` Varchar(100) default NUll,
-    `photo`Varchar(20) default NUll,
-    `status`Varchar(20) default NUll,
-    `note` text 
-) Engine=InnoDB default charset=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+CREATE table cards(
+    `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL,
+    `companyName` VARCHAR(100) DEFAULT NULL,
+    `phone` VARCHAR(20) DEFAULT NULL,
+    `email` VARCHAR(100) DEFAULT NULL,
+    `photo` VARCHAR(255) DEFAULT NULL,
+    `status` VARCHAR(20) DEFAULT NULL,
+    `note` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
  */
-$dsn='mysql:host=localhost;dbname=busnisscards;charset=utf8';
-$user='root';
-$pass='';
-try {
-    $pdo=new PDO($dsn,$user,$pass);
+
+//data source name
+$dsn = 'mysql:host=localhost;dbname=busnisscards;charset-utf8';
+$user = 'root';
+$pass = '';
+
+try{
+    $pdo = new PDO($dsn, $user, $pass);
+    //Hiba mód : exception dobasa hiba eseten;
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "sikere";;
-} catch (PDOException $ex) {
-    echo "Kapcs hiba: {$ex->Getmessage()}";
+    echo "sikeres kapcs";
+    //xss vedekezes a htmlspecialchars-al
+    //xss($pdo);
+    //sql_injection
+    //sql_injection($pdo);
+    echo "<br>";
+    prepared_statement($pdo); //védekezés sql injection ellen
+} catch(PDOException $ex){
+    echo "kapcs hiba {$ex->getMessage()}";
+    exit();
 }
-$name="P";
-$companyName="cég";
-$phone="063062054104";
-$email="valami@valami.com";
-$photo=null;
-$note="valamideaznagyon";
-//$sql ="INSERT INTO cards (`name`,`companyName`,phone,email,photo,note) values('$name','$companyName','$phone','$email','$photo','$note')";
-echo "<br>";
-$sql="INSERT INTO cards (`name`,`companyName`,phone,email,photo,note) values(?,?,?,?,?,?)";
-$stmt=$pdo->prepare($sql);
-$stmt->execute([$name,$companyName,$phone,$email,$photo,$note]);
-$sql="SELECT * FROM cards where id=11";
-
-$result = $pdo->query($sql);
-$card = $result->fetch(PDO::FETCH_ASSOC);
+function xss($pdo){
+    $name="odett";
+    $companyName=htmlspecialchars("<script>alert(\"idk\")</script>");
+    $phone="06205667898";
+    $email="valami@gmail.com";
+    $photo=null;
+    $note="webfejleszto";
+    $sql = "INSERT INTO cards(`name`,companyName,phone,email,photo,note)
+            VALUES ('$name','$companyName','$phone','$email','$photo','$note')";
+    $pdo->exec($sql);
+    $sql = "SELECT * FROM cards WHERE name = 'odett'";
+    $result = $pdo->query($sql);
+    $card = $result->fetch(PDO::FETCH_ASSOC);
+    echo "<br>";
+    print_r($card);
+}
+function sql_injection($pdo){
+    $name_i="' OR '1' = '1";
+    $sql = "SELECT * FROM cards WHERE name = '$name_i'";
+    $result = $pdo->query($sql);
+    $card = $result->fetchAll(PDO::FETCH_ASSOC);
+    echo "<br>";
+    print_r($card);
+    //$sql = "INSERT INTO cards(`name`,companyName,phone,email,photo,note)
+    //        VALUES (?,?,?,?,?,?)";
+    //$pdo->exec($sql);
+}
+function prepared_statement($pdo)
+{
+$name_i = "' OR '1' = '1";
+$sql = "SELECT * FROM cards WHERE name = ?";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$name_i]);
+$card = $stmt->fetchAll(PDO::FETCH_ASSOC);
 print_r($card);
-
-
-
-//$pdo->exec($sql);
+    //$sql = "INSERT INTO cards(`name`,companyName,phone,email,photo,note) VALUES (?,?,?,?,?,?)";
+    //$pdo->exec($sql);
+}
 ?>
